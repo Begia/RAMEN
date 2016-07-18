@@ -11,8 +11,6 @@ ipak <- function(pkg) {
 packages <- "optparse"
 ipak(packages)
 
-ncores <- detectCores()
-
 option_list <- list(
   make_option(
     c("-f", "--file"),
