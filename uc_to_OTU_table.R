@@ -4,7 +4,7 @@
 ipak <- function(pkg) {
   new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
   if (length(new.pkg))
-    install.packages(new.pkg, dependencies = TRUE)
+    install.packages(new.pkg, repos = "http://cran.us.r-project.org", dependencies = TRUE)
   sapply(pkg, require, character.only = TRUE)
 }
 
@@ -41,9 +41,9 @@ if (is.null(opt$file)) {
   stop("At least one argument must be supplied (input file).", call. = FALSE)
 }
 
-setwd("C:\Users\Matti\Documents\uOttawa\Tehsis")
+setwd(opt$out)
 
-df <- read.table("merA_sorted_uc99.uc")
+df <- read.table(opt$file)
 df <- df[,-c(6, 7)]
 cSizes <- df[df$V1 == "C",]
 df <- df[!df$V1 == "C",]
