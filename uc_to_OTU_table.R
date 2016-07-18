@@ -1,5 +1,5 @@
 #!/usr/bin/Rscript
-#Matti Ruuskanen, Jul 2016
+#Matti Ruuskanen & Julian Evans, Jul 2016
 
 ipak <- function(pkg) {
   new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
