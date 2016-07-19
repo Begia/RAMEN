@@ -1,12 +1,9 @@
 #!/usr/bin/Rscript
-#Matti Ruuskanen, Jul 2016
+#Matti Ruuskanen & Julian Evans, Jul 2016
 #Makes an OTU table from a clustered *.uc file.
 #Possibility to remove OTUs from the OTU table with less than a specified number of reads.
 #If given a matching fasta file of cluster seeds, renames the sequences and removes
 #OTUs with less than the user specified minimum number of reads also from the fasta file.
-
-suppressPackageStartupMessages(library("optparse"))
-suppressPackageStartupMessages(library("Biostrings"))
 
 ipak <- function(pkg) {
   new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
@@ -15,7 +12,7 @@ ipak <- function(pkg) {
   sapply(pkg, require, character.only = TRUE)
 }
 
-packages <- c("optparse", "Biostrings")
+packages <- c("optparse","seqinr")
 ipak(packages)
 
 option_list <- list(
@@ -73,14 +70,14 @@ removedOTUs <- cSizes[cSizes$count <= opt$min,]
 cSizes <- cSizes[!cSizes$`#OTU_ID` %in% removedOTUs$`#OTU_ID`,]
 
 if (opt$min > 0) {
-  print(paste(
+  cat(paste(
     "Removed ",
     nrow(cSizes),
     " OTUs with size under the threshold of ",
     opt$min,
     sep = ""
   ))
-  print("")
+  cat("\n")
 }
 
 df <- df[!df$V1 == "C", ]
@@ -102,7 +99,7 @@ colnames(otuTable)[1] <- "#OTU_ID"
 
 otuTable <- otuTable[otuTable$`#OTU_ID` %in% cSizes$`#OTU_ID`, ]
 
-print(paste(
+cat(paste(
   "A total of ",
   colSums(cSizes[2]),
   " reads in ",
@@ -110,15 +107,15 @@ print(paste(
   " OTUs, with:",
   sep = ""
 ))
-print("")
+cat("\n")
 for (i in 2:length(colnames(otuTable))) {
-  print(paste(
+  cat(paste(
     colnames(otuTable)[i],
     ": ",
     colSums(otuTable[i]),
     " reads in ",
     length(which(otuTable[, i] != 0)),
-    " OTUs",
+    " OTUs", "\n",
     sep = ""
   ))
 }
@@ -132,14 +129,10 @@ write.table(
 )
 
 if (!is.null(opt$fasta)) {
-  cSeeds <- readDNAStringSet(opt$fasta)
+  cSeeds <- read.fasta(opt$fasta,as.string=T,forceDNAtolower = F)
   names(cSeeds) <-
-    paste("OTU", seq(1:length(names(cSeeds))), sep = "_")
+    paste("OTU", seq(0:(length(names(cSeeds))-1)), sep = "_")
   cSeeds <- cSeeds[which(names(cSeeds) %in% otuTable$`#OTU_ID`)]
   fileName <- sub("(.+)\\.f.*", "\\1", opt$fasta)
-  writeXStringSet(
-    cSeeds,
-    filepath = paste(fileName, "renamed.fasta", sep = "_"),
-    format = "fasta"
-  )
+  write.fasta(sequences=cSeeds,names=names(cSeeds),file.out=paste(fileName,"renamed.fasta",sep="_"))
 }
