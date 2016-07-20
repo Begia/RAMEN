@@ -12,7 +12,7 @@ ipak <- function(pkg) {
   sapply(pkg, require, character.only = TRUE)
 }
 
-packages <- c("optparse","seqinr")
+packages <- c("optparse", "seqinr")
 ipak(packages)
 
 option_list <- list(
@@ -60,14 +60,14 @@ if (is.null(opt$clusters)) {
 setwd(opt$out)
 
 df <- read.table(opt$clusters)
-df <- df[,-c(6, 7)]
+df <- df[, -c(6, 7)]
 
-cSizes <- df[df$V1 == "C",]
+cSizes <- df[df$V1 == "C", ]
 cSizes <- cSizes[, 2:3]
 cSizes[, 1] <- paste("OTU", cSizes[, 1], sep = "_")
 colnames(cSizes) <- c("#OTU_ID", "count")
-removedOTUs <- cSizes[cSizes$count <= opt$min,]
-cSizes <- cSizes[!cSizes$`#OTU_ID` %in% removedOTUs$`#OTU_ID`,]
+removedOTUs <- cSizes[cSizes$count <= opt$min, ]
+cSizes <- cSizes[!cSizes$`#OTU_ID` %in% removedOTUs$`#OTU_ID`, ]
 
 if (opt$min > 0) {
   cat(paste(
@@ -80,9 +80,9 @@ if (opt$min > 0) {
   cat("\n")
 }
 
-df <- df[!df$V1 == "C", ]
+df <- df[!df$V1 == "C",]
 df <- df[, c(1, 2, 7)]
-df <- df[order(df$V2), ]
+df <- df[order(df$V2),]
 colnames(df) <- c("rType", "OTU", "Sample")
 df$Sample <- gsub("(.*)_.*", "\\1", df$Sample)
 df$Dummy <- rep(1, nrow(df))
@@ -97,7 +97,7 @@ otuTable$OTU_ID = paste("OTU", row.names(otuTable), sep = "_")
 otuTable = otuTable[, c(length(otuTable), c(1:length(otuTable) - 1))]
 colnames(otuTable)[1] <- "#OTU_ID"
 
-otuTable <- otuTable[otuTable$`#OTU_ID` %in% cSizes$`#OTU_ID`, ]
+otuTable <- otuTable[otuTable$`#OTU_ID` %in% cSizes$`#OTU_ID`,]
 
 cat(paste(
   "A total of ",
@@ -115,7 +115,8 @@ for (i in 2:length(colnames(otuTable))) {
     colSums(otuTable[i]),
     " reads in ",
     length(which(otuTable[, i] != 0)),
-    " OTUs", "\n",
+    " OTUs",
+    "\n",
     sep = ""
   ))
 }
@@ -129,10 +130,18 @@ write.table(
 )
 
 if (!is.null(opt$fasta)) {
-  cSeeds <- read.fasta(opt$fasta,as.string=T,forceDNAtolower = F)
+  cSeeds <- read.fasta(opt$fasta,
+                       as.string = T,
+                       forceDNAtolower = F)
   names(cSeeds) <-
-    paste("OTU", seq(0:(length(names(cSeeds))-1)), sep = "_")
+    paste("OTU", seq(0:(length(names(
+      cSeeds
+    )) - 1)), sep = "_")
   cSeeds <- cSeeds[which(names(cSeeds) %in% otuTable$`#OTU_ID`)]
-  fileName <- sub("(.+)\\.f.*", "\\1", opt$fasta)
-  write.fasta(sequences=cSeeds,names=names(cSeeds),file.out=paste(fileName,"renamed.fasta",sep="_"))
+  fileName <- sub(".+/+(.+)\\.f.*", "\\1", opt$fasta)
+  write.fasta(
+    sequences = cSeeds,
+    names = names(cSeeds),
+    file.out = paste(fileName, "renamed.fasta", sep = "_")
+  )
 }
