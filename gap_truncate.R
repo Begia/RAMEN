@@ -47,7 +47,7 @@ if (is.null(opt$alignment)) {
 
 setwd(opt$out)
 
-file <- read.fasta(opt$fasta, forceDNAtolower = F)
+file <- read.fasta(opt$alignment, forceDNAtolower = F)
 
 i <- 1
 x <- length(file)
