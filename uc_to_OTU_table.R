@@ -65,9 +65,9 @@ df <- df[, -c(6, 7)]
 cSizes <- df[df$V1 == "C", ]
 cSizes <- cSizes[, 2:3]
 cSizes[, 1] <- paste("OTU", cSizes[, 1], sep = "_")
-colnames(cSizes) <- c("#OTU_ID", "count")
+colnames(cSizes) <- c("OTU", "count")
 removedOTUs <- cSizes[cSizes$count <= opt$min, ]
-cSizes <- cSizes[!cSizes$`#OTU_ID` %in% removedOTUs$`#OTU_ID`, ]
+cSizes <- cSizes[!cSizes$`OTU` %in% removedOTUs$OTU, ]
 
 if (opt$min > 0) {
   cat(paste(
@@ -95,9 +95,9 @@ otuTable = as.data.frame.matrix(otuTable)
 otuTable$OTU_ID = paste("OTU", row.names(otuTable), sep = "_")
 
 otuTable = otuTable[, c(length(otuTable), c(1:length(otuTable) - 1))]
-colnames(otuTable)[1] <- "#OTU_ID"
+colnames(otuTable)[1] <- "OTU"
 
-otuTable <- otuTable[otuTable$`#OTU_ID` %in% cSizes$`#OTU_ID`,]
+otuTable <- otuTable[otuTable$OTU %in% cSizes$OTU,]
 
 cat(paste(
   "A total of ",
@@ -137,7 +137,7 @@ if (!is.null(opt$fasta)) {
     paste("OTU", seq(0:(length(names(
       cSeeds
     )) - 1)), sep = "_")
-  cSeeds <- cSeeds[which(names(cSeeds) %in% otuTable$`#OTU_ID`)]
+  cSeeds <- cSeeds[which(names(cSeeds) %in% otuTable$OTU)]
   fileName <- sub(".+/+(.+)\\.f.*", "\\1", opt$fasta)
   write.fasta(
     sequences = cSeeds,
