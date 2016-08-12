@@ -1,4 +1,4 @@
-#!/usr/bin/Rscript
+#!/usr/bin/env Rscript
 #Matti Ruuskanen, Jul 2016
 #gap truncate: truncate alignment from both ends to the first column with a base character in a set fraction of the sequences
 
