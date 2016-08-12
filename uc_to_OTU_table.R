@@ -1,4 +1,4 @@
-#!/usr/bin/Rscript
+#!/usr/bin/env Rscript
 #Matti Ruuskanen & Julian Evans, Jul 2016
 #Makes an OTU table from a clustered *.uc file.
 #Possibility to remove OTUs from the OTU table with less than a specified number of reads.
